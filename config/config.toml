@@ -3,7 +3,7 @@
 account = "bummqfk-te56281"
 
 # Credentials for Snowflake authentication
-username = "SJAIN"
+user = "SJAIN"
 password = "SNOW@SankalpJ30"  # For security, consider using environment variables
 
 # Optional: Specify the role, warehouse, database, and schema to use by default
