@@ -1,17 +1,18 @@
 [default]
 # Your Snowflake account identifier (e.g., xy12345.east-us-2.azure)
-account = bummqfk-te56281
+account = "bummqfk-te56281"
 
 # Credentials for Snowflake authentication
-username = SJAIN
-password = SNOW@SankalpJ30  # Alternatively, you could use environment variables for security
+username = "SJAIN"
+password = "SNOW@SankalpJ30"  # Alternatively, you could use environment variables for security
 
 # Optional: Specify the role, warehouse, database, and schema to use by default
-role = SYSADMIN
-warehouse = COMPUTE_WH
-database = SNOWFLAKE_SAMPLE_DATA
-schema = TPCH_SF1
+role = "SYSADMIN"
+warehouse = "COMPUTE_WH"
+database = "SNOWFLAKE_SAMPLE_DATA"
+schema = "TPCH_SF1"
 
 [logging]
 # Set the logging level (e.g., info, debug)
 level = "info"
+
