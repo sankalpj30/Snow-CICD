@@ -22,20 +22,44 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set ENV Variable based on Branch
+      - name: Set DEPLOY_ENV Variable
         run: echo "DEPLOY_ENV=${{ github.event.inputs.environment || github.ref_name }}" >> $GITHUB_ENV
 
       - name: Install Python and pip (Ubuntu/Debian)
         run: |
+          sudo apt-get update
           sudo apt-get install -y python3 python3-pip 
 
-      - name: Verify Python and pip installation, Install Snowflake CLI via pip
+      - name: Install and Verify Snowflake CLI via pipx
         run: |
           python3 -m pip install pipx
           pipx install snowflake-cli
           snow --version
 
-      - name: SNOWFLAKE CLI INSTALLATION
+      - name: Generate config.toml from Secrets
+        run: |
+          mkdir -p config
+          cat <<EOF > config/config.toml
+          [connections.default]
+          account = "$SNOWFLAKE_ACCOUNT"
+          user = "$SNOWFLAKE_USER"
+          password = "$SNOWFLAKE_PASSWORD"
+          role = "$SNOWFLAKE_ROLE"
+          warehouse = "$SNOWFLAKE_WAREHOUSE"
+
+          [logging]
+          level = "info"
+          EOF
+        env:
+          # Ensure the secrets are available to this step.
+          SNOWFLAKE_ACCOUNT: bummqfk-te56281
+          SNOWFLAKE_USER: SJAIN
+          SNOWFLAKE_PASSWORD: SNOW@SankalpJ30
+          SNOWFLAKE_ROLE: SYSADMIN
+          SNOWFLAKE_WAREHOUSE: COMPUTE_WH
+
+
+      - name: Install Snowflake CLI Action
         uses: Snowflake-Labs/snowflake-cli-action@v1.5
         with:
           cli-version: "latest"
@@ -44,7 +68,16 @@ jobs:
       - name: Test Snowflake Connection
         run: |
           snow sql -q "SELECT CURRENT_USER(), CURRENT_ROLE(), CURRENT_DATABASE(), CURRENT_WAREHOUSE();"
-        
+
+      - name: Deploy SQL Scripts
+        run: |
+          chmod +x deploymentScript/deploy.sh
+          ./deploymentScript/deploy.sh ${{ github.event.inputs.environment }}
+
+
+
+
+
       # - name: Deploy SQL Scripts
       #   run: |
       #     chmod +x deploymentScript/deploy.sh
